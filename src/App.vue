@@ -23,7 +23,9 @@
           </div>
         </div>
     </nav>
-    <router-view></router-view>
+    <transition name="fade" mode="out-in">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -39,15 +41,16 @@ export default {
     vSelect
   },
   created(){
+    window.scrollTo(0,0);
     this.$store.commit('SET_LOADING', true);
     const loadData = async () => {
       const market = this.$store.dispatch('getMarketData');
       await this.$store.dispatch('getCoins');
-      await this.$store.dispatch('getQuote', 'BTC');
       await market;
       return;
     }
     loadData().then(() => {
+      this.$store.dispatch('getQuote', 'BTC');
       this.$store.commit('SET_LOADING', false);
     });
   },
@@ -71,6 +74,12 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s;
+}
+.fade-enter, .fade-leave-to{
+  opacity: 0;
 }
 .navbar{
   flex-flow: nowrap;

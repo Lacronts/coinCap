@@ -18,7 +18,7 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <h2>Текущая цена: <strong class="text">{{formatCurrency(coinDetails.quote.USD.price)}}</strong> <span class="BTC_price text-secondary">({{coinDetails.quote.BTC.price.toFixed(6)}} BTC)</span></h2>
+        <h2>Текущая цена: <strong class="text">{{formatCurrency(coinDetails.quote.USD.price)}}</strong> <span class="BTC_price text-secondary">({{coinDetails.quote.hasOwnProperty('BTC') ? `${coinDetails.quote.BTC.price.toFixed(6)} BTC` : 'Загрузка...'}})</span></h2>
         <h5 class="text-secondary">при суммарной стоимости всех монет: {{formatCurrency(coinDetails.quote.USD.market_cap)}}</h5>
       </div>
     </div>
@@ -27,7 +27,7 @@
         <div class="info_coin">
           <h5>Объем торгов <span class="d-block">(24 часа)</span></h5>
           <span class="d-block text"><strong>{{formatCurrency(coinDetails.quote.USD.volume_24h)}}</strong></span>
-          <span class="d-block text-secondary">{{coinDetails.quote.BTC.volume_24h.toFixed(2)}} BTC</span>
+          <span class="d-block text-secondary">{{coinDetails.quote.hasOwnProperty('BTC') ? `${coinDetails.quote.BTC.volume_24h.toFixed(2)} BTC` : 'Загрузка...'}}</span>
         </div>
       </div>
       <div class="mt-3 col-12 col-md-4">
@@ -73,6 +73,12 @@
   <div v-else class="loading">
     <div class="spinner"></div>
   </div>
+  <div class="next" @click="nextCoin">
+    <i class="fas fa-3x fa-arrow-alt-circle-right"></i>
+  </div>
+  <div class="prev" @click="prevCoin">
+    <i class="fas fa-3x fa-arrow-alt-circle-left"></i>
+  </div>
 </div>
 </template>
 
@@ -93,12 +99,52 @@ export default {
     },
     ...mapGetters([
       'isLoading',
+      'getCoins',
+      'getCoinsStart',
     ])
   },
+  methods: {
+    nextCoin(){
+      const index = this.getCoins.find((item) => item.symbol===this.coin).cmc_rank;
+        if (index === +this.getCoinsStart+99) {
+          return;
+        };
+      const nextCoin = this.getCoins.find((item) => item.cmc_rank === +index+1).symbol;
+      this.$router.push(`/${nextCoin}`);
+    },
+    prevCoin(){
+      const index = this.getCoins.find((item) => item.symbol===this.coin).cmc_rank;
+      if (index === this.getCoinsStart) {
+        return;
+      };
+      const prevCoin = this.getCoins.find((item) => item.cmc_rank === index-1).symbol;
+      this.$router.push(`/${prevCoin}`);
+    },
+  }
 }
 </script>
 
 <style lang="css">
+.next{
+  position: fixed;
+  opacity: .3;
+  top:50%;
+  transform: translateY(-50%);
+  right:1rem;
+  transition: .3s;
+}
+.prev{
+  position: fixed;
+  opacity: .3;
+  top:50%;
+  transform: translateY(-50%);
+  left:1rem;
+  transition: .3s;
+}
+.prev:hover, .next:hover{
+  opacity: 1;
+  color:#2a5885;
+}
 .coinLoading{
     height: 70vh;
     display: flex;

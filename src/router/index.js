@@ -8,7 +8,7 @@ import CoinInfo from '../components/CoinInfo';
 Vue.use(VueRouter)
 
 const checkPath = (to, from, next) => {
-  let coins = store.getters.getCoins;
+  const coins = store.getters.getCoins;
   const coin = to.params.coin;
 
   if (!coins.length){
@@ -17,13 +17,13 @@ const checkPath = (to, from, next) => {
       (state) => state.coinState,
       () => {
         if (store.getters.coinDetails(coin)) next();
-        else next(`${coin}/not-found`);
+        else next(`sorry/not-found`);
       }
     )
   }
   else {
     if (store.getters.coinDetails(coin)) next();
-    else next(`${coin}/not-found`);
+    else next(`sorry/not-found`);
   }
 };
 

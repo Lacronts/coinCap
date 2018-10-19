@@ -25,11 +25,22 @@
   <div class="val mb-2">
     <dropdown
       :options="getDropdown.options"
-      :placeholder="'USD'"
       :selected="getDropdown.selected"
       v-on:updateOption="changeVal"
+      class="btn btn-outline-secondary"
     >
     </dropdown>
+    <button
+      class="btn btn-outline-secondary"
+      @click="prevCoins"
+      v-if="getCoinsStart > 99">
+      Prev 100
+    </button>
+    <button
+      class="btn btn-outline-secondary"
+      @click="nextCoins">
+      Next 100
+    </button>
   </div>
   <div class="row header">
     <div class="col-2 col-sm-1">
@@ -60,7 +71,7 @@
       %7д
     </div>
   </div>
-    <div class="mb-5">
+    <div v-if="!isLoadingCoins" class="mb-5">
       <coin-cap-item
         v-for="coin in getCoins"
         :key="coin.id"
@@ -68,9 +79,15 @@
       >
       </coin-cap-item>
     </div>
+    <div v-else class="loadingCoins">
+      <div class="spinner"></div>
+    </div>
   </div>
   <div v-else class="loading">
     <div class="spinner"></div>
+  </div>
+  <div class="arrow buttonToTopHide" v-scroll-to="'#app'">
+    <i class="fas fa-3x fa-arrow-alt-circle-up"></i>
   </div>
 </div>
 </template>
@@ -78,17 +95,21 @@
 <script>
 import { mapGetters } from 'vuex';
 import CoinCapItem from './CoinCapItem.vue';
-import dropdown from 'vue-dropdowns';
+import Dropdown from './Dropdown.vue';
 import utils from '@/utils';
 
 export default {
   name: 'HomePage',
   components: {
     CoinCapItem,
-    dropdown
+    Dropdown,
   },
   created(){
     this.formatCurrency = utils.formatCurrency;
+    window.addEventListener('scroll', this.arrowShow);
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.arrowShow);
   },
   computed: {
     ...mapGetters([
@@ -97,11 +118,38 @@ export default {
       'getVal',
       'isLoading',
       'market',
+      'getCoinsStart',
+      'isLoadingCoins',
     ]),
   },
   methods: {
+    arrowShow(){
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const arrow = document.querySelector('.arrow');
+      if (scrollTop >= 300) {
+        arrow.classList.add('buttonToTopShow');
+        arrow.classList.remove('buttonToTopHide');
+      }
+      else {
+        arrow.classList.remove('buttonToTopShow');
+        arrow.classList.add('buttonToTopHide');
+      }
+    },
     changeVal(val){
       this.$store.dispatch('changeVal', val);
+    },
+    nextCoins(){
+      let position;
+      if (+this.getCoinsStart === 1) position = +this.getCoinsStart + 99;
+      else position = +this.getCoinsStart + 100;
+      this.$store.dispatch('getCoinsNextPrev', position);
+
+    },
+    prevCoins(){
+      let position;
+      if (+this.getCoinsStart === 100) position = +this.getCoinsStart - 99;
+      else position = +this.getCoinsStart - 100;
+      this.$store.dispatch('getCoinsNextPrev', position);
     },
   }
 }
@@ -135,27 +183,76 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.val{
-  display: block;
+.loadingCoins{
+  height: 40vh;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  width:165px;
-  height: 48px;
+}
+.val{
+  display: flex;
+  align-items: center;
+  width:100%;
+  height: 40px;
+}
+.val .btn-group{
+  min-width: 60px;
+}
+.val .dropdown-menu{
+  min-width: 60px;
+}
+.val .btn-group .dropdown-toggle{
+  min-width: 60px;
+  background-image: none;
+  padding: .375rem .75rem;
+  margin: 0;
+}
+.btn-group.btn.btn-outline-secondary{
+  padding: 0;
+}
+.val .btn-group .dropdown-toggle:hover{
+  background: transparent;
+  color: white;
+}
+.val .btn-group .dropdown-menu > li > a:hover{
+  background: #6c757d;
+  color: white;
+}
+.val .btn{
+  height: 100%;
+}
+.buttonToTopShow{
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  opacity: 1;
+  transition: .5s;
+}
+.buttonToTopShow:hover{
+  color:#2a5885;
+}
+.buttonToTopHide{
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  opacity: 0;
+  transition: .5s;
 }
 .spinner {
     font-size: 10px;
     background-color: transparent;
     border-radius: 50%;
-    width: 3em;
-    height: 3em;
-    margin: 3em;
+    width: 2em;
+    height: 2em;
+    margin: 2em;
     animation: spinner 1s infinite ease-in-out;
 }
 @keyframes spinner {
     0% {
-        box-shadow: -3em -3em #000, 3em -3em #CCC, 3em 3em #000, -3em 3em #CCC;
+        box-shadow: -2em -2em #000, 2em -2em #CCC, 2em 2em #000, -2em 2em #CCC;
     }
     100% {
-        box-shadow: -3em 3em #CCC, -3em -3em #000, 3em -3em #CCC, 3em 3em #000;
+        box-shadow: -2em 2em #CCC, -2em -2em #000, 2em -2em #CCC, 2em 2em #000;
     }
 }
 </style>
