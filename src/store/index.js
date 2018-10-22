@@ -7,7 +7,6 @@ Vue.use(Vuex);
 const state = {
   coinState: [],
   marketCap: {},
-  test:[],
   coinsStart: 1,
   dropdown: {
     options: [
@@ -24,6 +23,8 @@ const state = {
     content: false,
     coins: false,
   },
+  descending: false,
+  sortBy: '',
 };
 
 const getters = {
@@ -37,6 +38,8 @@ const getters = {
   coinDetails: state => coin => {
     return state.coinState.find((item) => item.symbol === coin);
     },
+  sortBy: state => state.sortBy,
+  descending: state => state.descending,
   };
 
 const mutations = {
@@ -45,9 +48,6 @@ const mutations = {
   },
   UPDATE_MARKET_CAP(state, payload){
     state.marketCap = payload;
-  },
-  TEST_COINS(state, payload){
-    state.test = payload;
   },
   UPDATE_VAL(state, payload){
     state.dropdown.selected = payload;
@@ -61,16 +61,22 @@ const mutations = {
   UPDATE_START_POSITION(state, payload) {
     state.coinsStart = payload;
   },
+  CHANGE_DESC(state,payload) {
+    state.descending = payload;
+  },
+  CHANGE_SORTBY(state, payload){
+    state.sortBy = payload;
+  }
 };
 
 const actions = {
   getCoins({commit}, val='USD'){
-    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=${val}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
+    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?&convert=${val}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
       .then((response) => {
         commit('UPDATE_COINS', response.data.data);
     })
   },
-  getCoinsNextPrev({commit, dispatch, state}, pos){
+  getCoinsNextPrev({commit, dispatch}, pos){
     commit('SET_LOADING_COINS', true);
     return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=${pos}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
       .then((response) => {
@@ -78,6 +84,7 @@ const actions = {
         commit('UPDATE_START_POSITION', pos);
         commit('UPDATE_VAL', {id:1, name: 'USD'});
         commit('SET_LOADING_COINS', false);
+        commit('CHANGE_SORTBY', '');
         dispatch('getQuote', 'BTC');
     })
   },
@@ -92,8 +99,9 @@ const actions = {
     const pos = state.coinsStart;
     return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=${val}&start=${pos}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
         .then((response) => {
-          response.data.data.map((item, index) => {
-            newState[index].quote[val] = item.quote[val];
+          response.data.data.map((item) => {
+            let element = newState.find((el) => el.name === item.name);
+            element.quote[val] = item.quote[val];
           });
           commit('UPDATE_COINS', newState);
       });
@@ -117,8 +125,33 @@ const actions = {
     }
     commit('UPDATE_VAL', val);
   },
-  sortedData(param){
+  sortedData({commit, state}, param){
+    let sortedCoins;
+    const sortBy = state.sortBy;
 
+    if (param !== sortBy && sortBy !== '') commit('CHANGE_DESC', false);
+
+    commit('CHANGE_SORTBY', param);
+    const coins = JSON.parse(JSON.stringify(state.coinState));
+    const descending = !state.descending;
+
+    if (param.indexOf('quote') !== -1){
+      param = param.split('.')[1];
+      const currency = state.dropdown.selected.name;
+      sortedCoins = coins.sort((a, b) => {
+       return descending
+         ? (a.quote[currency][param] > b.quote[currency][param] ? 1 : -1)
+         : (a.quote[currency][param] < b.quote[currency][param] ? 1 : -1);
+       });
+    } else {
+       sortedCoins = coins.sort((a, b) => {
+        return descending
+          ? (a[param] > b[param] ? 1 : -1)
+          : (a[param] < b[param] ? 1 : -1);
+      });
+    }
+    commit('UPDATE_COINS', sortedCoins);
+    commit('CHANGE_DESC', descending);
   },
 };
 

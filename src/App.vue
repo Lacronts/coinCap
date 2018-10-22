@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
       <router-link class="nav-item" to="/">
         <div class="d-flex align-items-center">
           <img class="mr-1" src="./assets/icons/logo.jpg" alt="" width="30" height="30">
@@ -24,7 +24,7 @@
         </div>
     </nav>
     <transition name="fade" mode="out-in">
-      <router-view></router-view>
+      <router-view :key="$route.params.coin"></router-view>
     </transition>
   </div>
 </template>
@@ -68,12 +68,16 @@ export default {
 </script>
 
 <style>
+html, body{
+  height: 100%;
+}
 #app {
-  height: 100vh;
+  height: 100%;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  overflow: auto;
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .2s;
@@ -91,9 +95,7 @@ export default {
 .search .v-select{
   height: 100%;
 }
-.search .v-select .selected-tag{
 
-}
 .search .v-select .dropdown-toggle{
   height: 100%;
 }

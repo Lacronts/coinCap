@@ -43,32 +43,32 @@
     </button>
   </div>
   <div class="row header">
-    <div class="col-2 col-sm-1">
-      #
+    <div class="title col-2 col-sm-1" @click="sort('cmc_rank')">
+      # {{(sortBy === 'cmc_rank') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col px-0 text-left">
-      Коин
+    <div class="title col px-0 text-left" @click="sort('name')">
+      Коин {{(sortBy === 'name') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col d-none d-sm-none d-md-none d-lg-block">
-      Символ
+    <div class="title col d-none d-sm-none d-md-none d-lg-block" @click="sort('symbol')">
+      Символ {{(sortBy === 'symbol') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col d-none d-sm-none d-md-none d-lg-block">
-      Капитал.
+    <div class="title col d-none d-sm-none d-md-none d-lg-block" @click="sort('quote.market_cap')">
+      Капитал. {{(sortBy === 'quote.market_cap') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col">
-      Цена({{getVal}})
+    <div class="title col"  @click="sort('quote.price')">
+      Цена({{getVal}}) {{(sortBy === 'quote.price') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col d-none d-sm-none d-md-block">
-      Монет в обращении
+    <div class="title col d-none d-sm-none d-md-block" @click="sort('total_supply')">
+      Монет в обращении {{(sortBy === 'total_supply') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col-sm-1 d-none d-md-block">
-      %1ч
+    <div class="title col-sm-1 d-none d-md-block" @click="sort('quote.percent_change_1h')">
+      %1ч {{(sortBy === 'quote.percent_change_1h') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col-sm-1 d-none  d-lg-block">
-      %24ч
+    <div class="title col-sm-1 d-none  d-lg-block" @click="sort('quote.percent_change_24h')">
+      %24ч {{(sortBy === 'quote.percent_change_24h') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
-    <div class="col-sm-1 d-none  d-lg-block">
-      %7д
+    <div class="title col-sm-1 d-none  d-lg-block" @click="sort('quote.percent_change_7d')">
+      %7д {{(sortBy === 'quote.percent_change_7d') ?  (descending ? ' \u2191': '\u2193'): ' '}}
     </div>
   </div>
     <div v-if="!isLoadingCoins" class="mb-5">
@@ -120,6 +120,8 @@ export default {
       'market',
       'getCoinsStart',
       'isLoadingCoins',
+      'descending',
+      'sortBy',
     ]),
   },
   methods: {
@@ -151,11 +153,17 @@ export default {
       else position = +this.getCoinsStart - 100;
       this.$store.dispatch('getCoinsNextPrev', position);
     },
+    sort(param){
+      this.$store.dispatch('sortedData', param);
+    }
   }
 }
 </script>
 
 <style lang="css">
+.title{
+  cursor: pointer;
+}
 .home{
   height: 50vh;
 }

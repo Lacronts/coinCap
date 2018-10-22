@@ -19,7 +19,7 @@
           {{coin.quote[getVal].market_cap.toFixed(2)}} {{getVal}}
         </div>
         <div v-if="getVal==='USD'" class="col text font-weight-bold">
-          {{formatCurrency(coin.quote[getVal].price)}}
+        {{formatCurrency(coin.quote[getVal].price)}}
         </div>
         <div v-else class="col text font-weight-bold">
           {{coin.quote[getVal].price.toFixed(6)}} {{getVal}}
@@ -28,13 +28,13 @@
           {{formatNumber(coin.total_supply)}} {{coin.symbol}}
         </div>
         <div class="col-sm-1 d-none d-md-block" :class="[isValuePositive(coin.quote[getVal].percent_change_1h < 0) ? 'text-danger' : 'text-success']">
-          {{coin.quote[getVal].percent_change_1h.toFixed(2)}}
+          {{(coin.quote[getVal].percent_change_1h) ? coin.quote[getVal].percent_change_1h.toFixed(2) : 'Нет данных'}}
         </div>
         <div class="col-sm-1 d-none d-lg-block" :class="[isValuePositive(coin.quote[getVal].percent_change_24h < 0) ? 'text-danger' : 'text-success']">
-          {{coin.quote[getVal].percent_change_24h.toFixed(2)}}
+          {{(coin.quote[getVal].percent_change_24h) ? coin.quote[getVal].percent_change_24h.toFixed(2) : 'Нет данных'}}
         </div>
-          <div class="col-sm-1 d-none d-lg-block" :class="[isValuePositive(coin.quote[getVal].percent_change_7d < 0) ? 'text-danger' : 'text-success']">
-        {{coin.quote[getVal].percent_change_7d.toFixed(2)}}
+        <div class="col-sm-1 d-none d-lg-block" :class="[isValuePositive(coin.quote[getVal].percent_change_7d < 0) ? 'text-danger' : 'text-success']">
+          {{(coin.quote[getVal].percent_change_7d) ? coin.quote[getVal].percent_change_7d.toFixed(2) : 'Нет данных'}}
         </div>
       </div>
     </router-link>
