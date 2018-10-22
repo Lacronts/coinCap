@@ -71,7 +71,7 @@ const mutations = {
 
 const actions = {
   getCoins({commit}, val='USD'){
-    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?&convert=${val}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
+    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=${val}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
       .then((response) => {
         commit('UPDATE_COINS', response.data.data);
     })
