@@ -75,8 +75,7 @@
       <coin-cap-item
         v-for="coin in getCoins"
         :key="coin.id"
-        :coin="coin"
-      >
+        :coin="coin">
       </coin-cap-item>
     </div>
     <div v-else class="loadingCoins">
@@ -86,7 +85,7 @@
   <div v-else class="loading">
     <div class="spinner"></div>
   </div>
-  <div class="arrow buttonToTopHide">
+  <div class="arrow buttonToTopHide" v-scroll-to="'#app'">
     <i class="fas fa-3x fa-arrow-alt-circle-up"></i>
   </div>
 </div>
@@ -240,7 +239,7 @@ export default {
   transition: .5s;
 }
 .buttonToTopShow:hover{
-  color:#2a5885;
+  color:#4fc08d;
 }
 .buttonToTopHide{
   position: fixed;
