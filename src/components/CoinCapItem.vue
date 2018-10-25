@@ -68,13 +68,17 @@ export default {
 .row .text{
   color: #2a5885;
 }
+
 .coinItem{
-  border: 1px solid rgba(34,36,38,.1);
+  border: .4px solid rgba(34,36,38,.15);
+  border-bottom: 0;
   height: 3rem;
-  transition: all 0.05s ease-in-out;
+  transition: all 0.1s ease-in-out;
 }
 .coinItem:hover{
-  transform: scale(1.01);
+  transform: translate3d(1px,1px, 1px);
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.3),
+        inset 0px 0px 1px 1px rgba(204,198,197,0.5);
 }
 .coinItem a{
   color: inherit;

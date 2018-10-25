@@ -41,13 +41,11 @@ export default {
     vSelect
   },
   created(){
-    window.scrollTo(0,0);
     this.$store.commit('SET_LOADING', true);
     const loadData = async () => {
       const market = this.$store.dispatch('getMarketData');
       await this.$store.dispatch('getCoins');
       await market;
-      return;
     }
     loadData().then(() => {
       this.$store.dispatch('getQuote', 'BTC');
@@ -61,6 +59,7 @@ export default {
   },
   methods: {
     toCoinDetails(val){
+      if (!val) return;
       this.$router.push(`/${val.symbol}`)
     }
   }
@@ -77,6 +76,7 @@ html, body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  background: #fafbfd;
   overflow: auto;
 }
 .fade-enter-active, .fade-leave-active {
@@ -87,6 +87,8 @@ html, body{
 }
 .navbar{
   flex-flow: nowrap;
+  box-shadow: 0 2px 8px 0 #e1e5ea;
+  opacity: .9;
 }
 .search{
   width:220px;

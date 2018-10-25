@@ -11,11 +11,12 @@ const state = {
   dropdown: {
     options: [
       {id:1, name: 'USD'},
-      {id:2, name: 'BTC'},
-      {id:3, name: 'ETH'},
-      {id:4, name: 'LTC'},
-      {id:5, name: 'BCH'},
-      {id:6, name: 'XRP'},
+      {id:2, name: 'RUB'},
+      {id:3, name: 'BTC'},
+      {id:4, name: 'ETH'},
+      {id:5, name: 'LTC'},
+      {id:6, name: 'BCH'},
+      {id:7, name: 'XRP'},
     ],
     selected: {id:1, name: 'USD'},
   },
@@ -71,25 +72,32 @@ const mutations = {
 
 const actions = {
   getCoins({commit}, val='USD'){
-    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=${val}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
-      .then((response) => {
+    return axios.get('/api/listings', {
+      params: {
+        val: val
+      }
+    }).then((response) => {
         commit('UPDATE_COINS', response.data.data);
     })
   },
   getCoinsNextPrev({commit, dispatch}, pos){
     commit('SET_LOADING_COINS', true);
-    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=${pos}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
+    return axios.get(`/api/listings`, {
+      params: {
+        pos: pos
+      }
+    })
       .then((response) => {
         commit('UPDATE_COINS', response.data.data);
         commit('UPDATE_START_POSITION', pos);
         commit('UPDATE_VAL', {id:1, name: 'USD'});
-        commit('SET_LOADING_COINS', false);
         commit('CHANGE_SORTBY', '');
+        commit('SET_LOADING_COINS', false);
         dispatch('getQuote', 'BTC');
     })
   },
   getMarketData({commit}){
-    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
+    return axios.get(`/api/market`)
       .then((response) => {
         commit('UPDATE_MARKET_CAP', response.data.data);
     })
@@ -97,8 +105,12 @@ const actions = {
   getQuote({commit, state}, val){
     let newState = JSON.parse(JSON.stringify(state.coinState));
     const pos = state.coinsStart;
-    return axios.get(`http://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=${val}&start=${pos}`,{headers: {'X-CMC_PRO_API_KEY':'4d7d35fe-9265-43cc-8344-612758f55d31'}})
-        .then((response) => {
+    return axios.get(`/api/listings`, {
+      params: {
+        val: val,
+        pos: pos
+      }
+    }).then((response) => {
           response.data.data.map((item) => {
             let element = newState.find((el) => el.name === item.name);
             element.quote[val] = item.quote[val];
@@ -107,14 +119,6 @@ const actions = {
       });
   },
   changeVal({commit, dispatch, state}, val){
-    if (!state.coinState.length) {
-      commit('SET_LOADING', true);
-      return dispatch('getCoins', 'USD')
-      .then(()=> {
-        commit('UPDATE_VAL', {id:1, name: 'USD'});
-        commit('SET_LOADING', false);
-      });
-    }
     if (!state.isLoading.content && !state.coinState[0].quote.hasOwnProperty(val.name)) {
       commit('SET_LOADING_COINS', true);
       return dispatch('getQuote', val.name)

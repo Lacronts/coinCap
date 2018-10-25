@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <li @click="toggleMenu()" class="dropdown-toggle" v-if="selectedOption.name !== undefined">
+        <li id="dropdown" @click="toggleMenu()" class="dropdown-toggle" v-if="selectedOption.name !== undefined">
           {{ selectedOption.name }}
           <span class="caret"></span>
         </li>
@@ -38,7 +38,12 @@
             selected: {},
             placeholder: [String]
         },
-
+        created(){
+          document.addEventListener('click', this.closeMenu);
+        },
+        destroyed(){
+          document.removeEventListener('click', this.closeMenu);
+        },
         mounted() {
             this.selectedOption = this.selected;
             if (this.placeholder)
@@ -62,6 +67,12 @@
 
             toggleMenu() {
               this.showMenu = !this.showMenu;
+            },
+
+            closeMenu() {
+              if (event.target.id !== 'dropdown' && this.showMenu === true) {
+              this.showMenu = false;
+              }
             }
         }
     }

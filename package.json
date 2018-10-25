@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run serve\"",
+    "server": "node server",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "bulma": "^0.7.2",
-    "nprogress": "^0.2.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "vue": "^2.5.17",
-    "vue-dropdowns": "^1.0.6",
     "vue-router": "^3.0.1",
-    "vue-scrollto": "^2.13.0",
     "vue-select": "^2.5.1",
     "vuex": "^3.0.1"
   },
@@ -22,6 +22,7 @@
     "@vue/cli-plugin-babel": "^3.0.1",
     "@vue/cli-plugin-eslint": "^3.0.1",
     "@vue/cli-service": "^3.0.1",
+    "concurrently": "^3.6.1",
     "vue-template-compiler": "^2.5.17"
   },
   "eslintConfig": {

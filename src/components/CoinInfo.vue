@@ -148,8 +148,9 @@ export default {
   transition: .3s;
 }
 .prev:hover, .next:hover{
+  cursor: pointer;
   opacity: 1;
-  color:#2a5885;
+  color:#4fc08d;
 }
 .coinLoading{
     height: 70vh;
@@ -171,8 +172,8 @@ export default {
 
 .row .info_coin{
   height: 100%;
-  box-shadow: 3px 3px 20px 3px rgba(42, 88, 133, 0.5);
-  border: 2px solid #2a5885;
+  box-shadow: 2px 2px 5px .4px rgba(42, 88, 133, 0.5),
+              0 0 0 1px #4fc08d;
   border-radius: 10px;
 }
 

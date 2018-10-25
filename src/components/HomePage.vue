@@ -4,25 +4,25 @@
     <div class="row h3 my-4 justify-content-center">
       <div class="total col-12 col-sm-10 col-md-7 py-1">
         <strong class="text-secondary">Рыночная капитализация:
-          <span class="d-block text-success">{{formatCurrency(market.quote.USD.total_market_cap)}}</span>
+          <span class="total_price d-block">{{formatCurrency(market.quote.USD.total_market_cap)}}</span>
         </strong>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12 col-sm-4">
-        Всего валют:
+    <div class="row mb-2">
+      <div class="market col-12 col-sm-4">
+        Всего криптовалют:
         <p><strong class="text">{{market.active_cryptocurrencies}}</strong></p>
       </div>
-      <div class="col-12 col-sm-4">
+      <div class="market col-12 col-sm-4">
         BTC доминирование:
       <p><strong class="text">{{market.btc_dominance.toFixed(2)}}%</strong></p>
       </div>
-      <div class="col-12 col-sm-4">
+      <div class="market col-12 col-sm-4">
         ETH доминирование:
         <p><strong class="text">{{market.eth_dominance.toFixed(2)}}%</strong></p>
       </div>
     </div>
-  <div class="val mb-2">
+  <div class="btn-group val mb-2">
     <dropdown
       :options="getDropdown.options"
       :selected="getDropdown.selected"
@@ -86,7 +86,7 @@
   <div v-else class="loading">
     <div class="spinner"></div>
   </div>
-  <div class="arrow buttonToTopHide" v-scroll-to="'#app'">
+  <div class="arrow buttonToTopHide">
     <i class="fas fa-3x fa-arrow-alt-circle-up"></i>
   </div>
 </div>
@@ -167,14 +167,17 @@ export default {
 .home{
   height: 50vh;
 }
+.total_price {
+  color: #4fc08d;
+}
 .row{
   margin: 0;
   align-items: center;
 }
 .total{
   width: 500px;
-  border: 1px solid rgba(0,0,0,.5);
-  border-radius:50px;
+  margin: 1em;
+  box-shadow: 0 2px 8px 0 #e1e5ea;
 }
 .row.header{
   align-items: center;
@@ -183,7 +186,7 @@ export default {
   font-size: 14px;
   font-weight: 700;
   box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(to right bottom, rgba(42,88,133,.5), rgba(22,88,130,0.9));
+  background: linear-gradient(to right bottom, #4fc08d, rgba(22,88,130,0.9));
 }
 .loading{
   height: 100vh;
@@ -254,6 +257,12 @@ export default {
     height: 2em;
     margin: 2em;
     animation: spinner 1s infinite ease-in-out;
+}
+.market{
+  color: rgba(23,24,27,0.65);
+  box-shadow: 0 2px 4px 0 #e1e5ea;
+  font-size: 13px;
+  font-weight: 600;
 }
 @keyframes spinner {
     0% {
